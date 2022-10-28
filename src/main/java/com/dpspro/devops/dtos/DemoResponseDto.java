@@ -1,4 +1,4 @@
-package com.dpontespro.devops.dtos;
+package com.dpspro.devops.dtos;
 
 import lombok.*;
 
@@ -14,12 +14,12 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode
 @Builder
-public class DpsProDemoResponseDto {
+public class DemoResponseDto {
     private Integer productId;
     private Long brandId;
-    private Integer dpsProDemoList;
+    private Integer demoList;
     private List<LocalDate> applicationDates;
-    private BigDecimal dpsProDemo;
+    private BigDecimal demoPrice;
 
 
 }

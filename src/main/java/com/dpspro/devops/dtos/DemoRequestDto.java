@@ -1,4 +1,4 @@
-package com.dpontespro.devops.dtos;
+package com.dpspro.devops.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
@@ -12,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 @ToString
 @Builder
-public class DpsProDemoRequestDto {
+public class DemoRequestDto {
     @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
     private Date requestDate;

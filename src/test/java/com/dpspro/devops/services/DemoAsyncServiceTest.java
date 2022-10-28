@@ -1,10 +1,10 @@
-package com.dpontespro.devops.services;
+package com.dpspro.devops.services;
 
 
-import com.dpontespro.devops.dtos.DpsProDemoRequestDto;
-import com.dpontespro.devops.dtos.DpsProDemoResponseDto;
-import com.dpontespro.devops.entities.DpsProDemo;
-import com.dpontespro.devops.repositories.DpsProDemoRepository;
+import com.dpspro.devops.dtos.DemoRequestDto;
+import com.dpspro.devops.dtos.DemoResponseDto;
+import com.dpspro.devops.entities.Demo;
+import com.dpspro.devops.repositories.DemoRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,60 +32,60 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-class DpsProDemoAsyncServiceTest {
+class DemoAsyncServiceTest {
     private final List<LocalDate> localDates = new ArrayList<>();
     @Autowired
     private ThreadPoolTaskExecutor myTaskExecutor;
     @Mock
-    private DpsProDemoAsyncService dpsProDemoAsyncService;
-    private final List<DpsProDemo> dpsProDemoList = new ArrayList<>();
+    private DemoAsyncService demoAsyncService;
+    private final List<Demo> demoList = new ArrayList<>();
 
     @Mock
-    private DpsProDemoRepository dpsProDemoRepository;
-    private DpsProDemo dpsProDemo;
-    private DpsProDemoResponseDto dpsProDemoResponseDto;
-    private DpsProDemoRequestDto dpsProDemoRequestDto;
+    private DemoRepository demoRepository;
+    private Demo demo;
+    private DemoResponseDto demoResponseDto;
+    private DemoRequestDto demoRequestDto;
 
 
     @BeforeEach
     void setUp() {
 
-        DpsProDemo dpsProDemo1 = DpsProDemo.builder().brandId(1L)
+        Demo demo1 = Demo.builder().brandId(1L)
                 .startDate(Timestamp.valueOf("2020-06-14 00:00:00"))
-                .endDate(Timestamp.valueOf("2020-12-31 23:59:59")).dpsProDemoList(1)
-                .productId(35455).priority(0).dpsProDemo(BigDecimal.valueOf(35.50))
+                .endDate(Timestamp.valueOf("2020-12-31 23:59:59")).demoList(1)
+                .productId(35455).priority(0).demoPrice(BigDecimal.valueOf(35.50))
                 .curr("EUR").build();
-        DpsProDemo dpsProDemo2 = DpsProDemo.builder().brandId(1L)
+        Demo demo2 = Demo.builder().brandId(1L)
                 .startDate(Timestamp.valueOf("2020-06-14 15:00:00"))
-                .endDate(Timestamp.valueOf("2020-06-14 18:30:00")).dpsProDemoList(2)
-                .productId(35455).priority(1).dpsProDemo(BigDecimal.valueOf(25.45))
+                .endDate(Timestamp.valueOf("2020-06-14 18:30:00")).demoList(2)
+                .productId(35455).priority(1).demoPrice(BigDecimal.valueOf(25.45))
                 .curr("EUR").build();
-        DpsProDemo dpsProDemo3 = DpsProDemo.builder().brandId(1L)
+        Demo demo3 = Demo.builder().brandId(1L)
                 .startDate(Timestamp.valueOf("2020-06-15 00:00:00"))
-                .endDate(Timestamp.valueOf("2020-12-15 11:00:00")).dpsProDemoList(3)
-                .productId(35455).priority(1).dpsProDemo(BigDecimal.valueOf(30.50))
+                .endDate(Timestamp.valueOf("2020-12-15 11:00:00")).demoList(3)
+                .productId(35455).priority(1).demoPrice(BigDecimal.valueOf(30.50))
                 .curr("EUR").build();
-        DpsProDemo dpsProDemo4 = DpsProDemo.builder().brandId(1L)
+        Demo demo4 = Demo.builder().brandId(1L)
                 .startDate(Timestamp.valueOf("2020-06-15 16:00:00"))
-                .endDate(Timestamp.valueOf("2020-12-31 23:59:59")).dpsProDemoList(4)
-                .productId(35455).priority(1).dpsProDemo(BigDecimal.valueOf(38.95))
+                .endDate(Timestamp.valueOf("2020-12-31 23:59:59")).demoList(4)
+                .productId(35455).priority(1).demoPrice(BigDecimal.valueOf(38.95))
                 .curr("EUR").build();
-        dpsProDemoList.add(dpsProDemo1);
-        dpsProDemoList.add(dpsProDemo2);
-        dpsProDemoList.add(dpsProDemo3);
-        dpsProDemoList.add(dpsProDemo4);
-        dpsProDemo = dpsProDemo2;
+        demoList.add(demo1);
+        demoList.add(demo2);
+        demoList.add(demo3);
+        demoList.add(demo4);
+        demo = demo2;
 
-        dpsProDemoResponseDto = DpsProDemoResponseDto.builder()//DpsProDemoResponseDto.DpsProDemoResponseDtoBuilder builder = DpsProDemoResponseDto.builder();
-        .productId(dpsProDemo3.getProductId())
-        .brandId(dpsProDemo3.getBrandId())
-        .dpsProDemoList(dpsProDemo3.getDpsProDemoList())
+        demoResponseDto = DemoResponseDto.builder()//DemoResponseDto.DemoResponseDtoBuilder builder = DemoResponseDto.builder();
+        .productId(demo3.getProductId())
+        .brandId(demo3.getBrandId())
+        .demoList(demo3.getDemoList())
         .applicationDates(localDates)
-        .dpsProDemo(dpsProDemo3.getDpsProDemo()).build();
+        .demoPrice(demo3.getDemoPrice()).build();
 
 
 
-        dpsProDemoRequestDto = DpsProDemoRequestDto.builder()
+        demoRequestDto = DemoRequestDto.builder()
                 .requestDate(Timestamp.valueOf("2020-06-14 11:55:00"))
                 .brandId(1L)
                 .productId(35455).build();
@@ -93,63 +93,63 @@ class DpsProDemoAsyncServiceTest {
 
 
     @Test
-    @DisplayName("look_for_all_dpsProDemo_by_productIid_and_brandId")
-    public void testGetCurrentDpsProDemoByProductIdAndBrandId() {
+    @DisplayName("look_for_all_demo_by_productIid_and_brandId")
+    public void testGetCurrentDemoByProductIdAndBrandId() {
 
-        when(dpsProDemoRepository.findByProductIdAndBrandId(35455, 1L)).thenReturn(this.dpsProDemoList);
+        when(demoRepository.findByProductIdAndBrandId(35455, 1L)).thenReturn(this.demoList);
 
 
-        List<DpsProDemo> dpsProDemoList = this.dpsProDemoRepository.findByProductIdAndBrandId(35455, 1L);
+        List<Demo> demoList = this.demoRepository.findByProductIdAndBrandId(35455, 1L);
 
-        assertNotNull(dpsProDemoList, "dpsProDemoList object should not be null");
-        assertEquals(4, dpsProDemoList.size(), "dpsProDemoList size should  be 4");
+        assertNotNull(demoList, "demoList object should not be null");
+        assertEquals(4, demoList.size(), "demoList size should  be 4");
 
 
     }
 
 
     @Test
-    void testgetDpsProDemo() {
-        when(dpsProDemoRepository.findByProductIdAndBrandId(35455, 1L)).thenReturn(dpsProDemoList);
-       when(this.dpsProDemoAsyncService.getDpsProDemo(dpsProDemoRequestDto, dpsProDemoList)).thenReturn(this.dpsProDemo);
-       DpsProDemo dpsProDemo1=dpsProDemoAsyncService.getDpsProDemo(dpsProDemoRequestDto,dpsProDemoRepository.findByProductIdAndBrandId(35455, 1L));
-        assertNotNull(dpsProDemo1, "dpsProDemo object should not be null");
-        assertAll("getDpsProDemo",
-                () -> assertEquals(BigDecimal.valueOf(25.45), dpsProDemo.getDpsProDemo()),
-                () -> assertEquals(35455, dpsProDemo.getProductId()));
+    void testgetDemo() {
+        when(demoRepository.findByProductIdAndBrandId(35455, 1L)).thenReturn(demoList);
+       when(this.demoAsyncService.getDemo(demoRequestDto, demoList)).thenReturn(this.demo);
+       Demo demo1=demoAsyncService.getDemo(demoRequestDto,demoRepository.findByProductIdAndBrandId(35455, 1L));
+        assertNotNull(demo1, "demo object should not be null");
+        assertAll("getDemo",
+                () -> assertEquals(BigDecimal.valueOf(25.45), demo.getDemoPrice()),
+                () -> assertEquals(35455, demo.getProductId()));
     }
 
 
     @Test
     void testentityToDto() {
-        LocalDate localDate= LocalDate.ofInstant(dpsProDemoRequestDto.getRequestDate().toInstant(), ZoneId.of("UTC"));
+        LocalDate localDate= LocalDate.ofInstant(demoRequestDto.getRequestDate().toInstant(), ZoneId.of("UTC"));
         localDates.add(localDate);
-//        DpsProDemoResponseDto   dpsProDemoResponseDto1 = DpsProDemoResponseDto.builder()//DpsProDemoResponseDto.DpsProDemoResponseDtoBuilder builder = DpsProDemoResponseDto.builder();
-//                .productId(dpsProDemo.getProductId())
+//        DemoResponseDto   demoResponseDto1 = DemoResponseDto.builder()//DemoResponseDto.DemoResponseDtoBuilder builder = DemoResponseDto.builder();
+//                .productId(demo.getProductId())
 //                .brandId(1L)
-//                .dpsProDemoList(2)
+//                .demoList(2)
 //                .applicationDates(localDates)
-//                .dpsProDemo(BigDecimal.valueOf(30.5)).build();
-      //  when(dpsProDemoRepository.findByProductIdAndBrandId(35455, 1L)).thenReturn(dpsProDemo);
-        when(this.dpsProDemoAsyncService.entityToDto(this.dpsProDemo, dpsProDemoRequestDto.getRequestDate())).thenReturn(this.dpsProDemoResponseDto);
-       this.dpsProDemoResponseDto = dpsProDemoAsyncService.entityToDto(this.dpsProDemo, dpsProDemoRequestDto.getRequestDate());
-        assertNotNull(dpsProDemoResponseDto, "dpsProDemoResponseDto object should not be null");
-        final Runnable runnable = () -> assertEquals(1, dpsProDemoResponseDto.getApplicationDates().size());
+//                .demoPrice(BigDecimal.valueOf(30.5)).build();
+      //  when(demoRepository.findByProductIdAndBrandId(35455, 1L)).thenReturn(demo);
+        when(this.demoAsyncService.entityToDto(this.demo, demoRequestDto.getRequestDate())).thenReturn(this.demoResponseDto);
+       this.demoResponseDto = demoAsyncService.entityToDto(this.demo, demoRequestDto.getRequestDate());
+        assertNotNull(demoResponseDto, "demoResponseDto object should not be null");
+        final Runnable runnable = () -> assertEquals(1, demoResponseDto.getApplicationDates().size());
         assertAll(
-                () -> assertEquals(BigDecimal.valueOf(30.5), dpsProDemoResponseDto.getDpsProDemo()),
-                () -> assertEquals(1, dpsProDemoResponseDto.getApplicationDates().size())
+                () -> assertEquals(BigDecimal.valueOf(30.5), demoResponseDto.getDemoPrice()),
+                () -> assertEquals(1, demoResponseDto.getApplicationDates().size())
         );
     }
 
     @Test
-    void asyncDpsProDemoResponse() {
+    void asyncDemoResponse() {
 
 
-        DpsProDemoRequestDto dpsProDemoRequestDto = new DpsProDemoRequestDto(Timestamp.valueOf("2020-06-14 00:00:00"), 1, 1L);
-        DpsProDemoResponseDto dpsProDemoResponseDto = new DpsProDemoResponseDto(35455, 1L, 1, localDates, BigDecimal.valueOf(35.50));
-        when(dpsProDemoAsyncService.getCurrentDpsProDemoByProductIdAndBrandId(dpsProDemoRequestDto))
-                .thenReturn(new AsyncResult<>(dpsProDemoResponseDto));
-        this.dpsProDemoAsyncService.getCurrentDpsProDemoByProductIdAndBrandId(dpsProDemoRequestDto);
+        DemoRequestDto demoRequestDto = new DemoRequestDto(Timestamp.valueOf("2020-06-14 00:00:00"), 1, 1L);
+        DemoResponseDto demoResponseDto = new DemoResponseDto(35455, 1L, 1, localDates, BigDecimal.valueOf(35.50));
+        when(demoAsyncService.getCurrentDemoByProductIdAndBrandId(demoRequestDto))
+                .thenReturn(new AsyncResult<>(demoResponseDto));
+        this.demoAsyncService.getCurrentDemoByProductIdAndBrandId(demoRequestDto);
 
         try {
             boolean awaitTermination = this.myTaskExecutor.getThreadPoolExecutor().awaitTermination(1, TimeUnit.SECONDS);
@@ -164,17 +164,17 @@ class DpsProDemoAsyncServiceTest {
     @Test
     @DisplayName("time_sleep_test")
     public void testSleepTime() throws ExecutionException, InterruptedException {
-        DpsProDemoRequestDto dpsProDemoRequestDto = new DpsProDemoRequestDto(Timestamp.valueOf("2020-06-14 00:00:00"), 1, 1L);
-        DpsProDemoResponseDto dpsProDemoResponseDto = new DpsProDemoResponseDto(35455, 1L, 1, localDates, BigDecimal.valueOf(35.50));
-       when(this.dpsProDemoAsyncService.getCurrentDpsProDemoByProductIdAndBrandId(dpsProDemoRequestDto))
-                .thenReturn(new AsyncResult<>(dpsProDemoResponseDto));
+        DemoRequestDto demoRequestDto = new DemoRequestDto(Timestamp.valueOf("2020-06-14 00:00:00"), 1, 1L);
+        DemoResponseDto demoResponseDto = new DemoResponseDto(35455, 1L, 1, localDates, BigDecimal.valueOf(35.50));
+       when(this.demoAsyncService.getCurrentDemoByProductIdAndBrandId(demoRequestDto))
+                .thenReturn(new AsyncResult<>(demoResponseDto));
 
         long now = System.currentTimeMillis();
 
         // <2>  Blocking waiting for results
 
 
-        Future<DpsProDemoResponseDto> executeResult = this.dpsProDemoAsyncService.getCurrentDpsProDemoByProductIdAndBrandId(dpsProDemoRequestDto);
+        Future<DemoResponseDto> executeResult = this.demoAsyncService.getCurrentDemoByProductIdAndBrandId(demoRequestDto);
 
         // <1>  Perform tasks
          long sleep = 1000;

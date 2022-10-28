@@ -1,10 +1,10 @@
-package com.dpontespro.devops;
+package com.dpspro.devops;
 
-import com.dpontespro.devops.dtos.DpsProDemoRequestDto;
-import com.dpontespro.devops.dtos.DpsProDemoResponseDto;
-import com.dpontespro.devops.entities.DpsProDemo;
-import com.dpontespro.devops.repositories.DpsProDemoRepository;
-import com.dpontespro.devops.services.DpsProDemoAsyncService;
+import com.dpspro.devops.dtos.DemoRequestDto;
+import com.dpspro.devops.dtos.DemoResponseDto;
+import com.dpspro.devops.entities.Demo;
+import com.dpspro.devops.repositories.DemoRepository;
+import com.dpspro.devops.services.DemoAsyncService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,52 +41,50 @@ class ExpectedBehaviorIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private DpsProDemoAsyncService dpsProDemoService;
+    private DemoAsyncService demoService;
     @MockBean
-    private DpsProDemoRepository dpsProDemoRepository;
-    DpsProDemo dpsProDemo;
+    private DemoRepository demoRepository;
+    Demo demo;
     private final List<LocalDate> localDates = new ArrayList<>();
-    private final List<DpsProDemo> dpsProDemoList = new ArrayList<>();
-    private DpsProDemoResponseDto dpsProDemoResponseDto;
-    private DpsProDemoRequestDto dpsProDemoRequestDto;
+    private final List<Demo> demoList = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
 
-        DpsProDemo dpsProDemo1 = DpsProDemo.builder().brandId(1L)
+        Demo demo1 = Demo.builder().brandId(1L)
                 .startDate(Timestamp.valueOf("2020-06-14 00:00:00"))
-                .endDate(Timestamp.valueOf("2020-12-31 23:59:59")).dpsProDemoList(1)
-                .productId(35455).priority(0).dpsProDemo(BigDecimal.valueOf(35.50))
+                .endDate(Timestamp.valueOf("2020-12-31 23:59:59")).demoList(1)
+                .productId(35455).priority(0).demoPrice(BigDecimal.valueOf(35.50))
                 .curr("EUR").build();
-        DpsProDemo dpsProDemo2 = DpsProDemo.builder().brandId(1L)
+        Demo demo2 = Demo.builder().brandId(1L)
                 .startDate(Timestamp.valueOf("2020-06-14 15:00:00"))
-                .endDate(Timestamp.valueOf("2020-06-14 18:30:00")).dpsProDemoList(2)
-                .productId(35455).priority(1).dpsProDemo(BigDecimal.valueOf(25.45))
+                .endDate(Timestamp.valueOf("2020-06-14 18:30:00")).demoList(2)
+                .productId(35455).priority(1).demoPrice(BigDecimal.valueOf(25.45))
                 .curr("EUR").build();
-        DpsProDemo dpsProDemo3 = DpsProDemo.builder().brandId(1L)
+        Demo demo3 = Demo.builder().brandId(1L)
                 .startDate(Timestamp.valueOf("2020-06-15 00:00:00"))
-                .endDate(Timestamp.valueOf("2020-12-15 11:00:00")).dpsProDemoList(3)
-                .productId(35455).priority(1).dpsProDemo(BigDecimal.valueOf(30.50))
+                .endDate(Timestamp.valueOf("2020-12-15 11:00:00")).demoList(3)
+                .productId(35455).priority(1).demoPrice(BigDecimal.valueOf(30.50))
                 .curr("EUR").build();
-        DpsProDemo dpsProDemo4 = DpsProDemo.builder().brandId(1L)
+        Demo demo4 = Demo.builder().brandId(1L)
                 .startDate(Timestamp.valueOf("2020-06-15 16:00:00"))
-                .endDate(Timestamp.valueOf("2020-12-31 23:59:59")).dpsProDemoList(4)
-                .productId(35455).priority(1).dpsProDemo(BigDecimal.valueOf(38.95))
+                .endDate(Timestamp.valueOf("2020-12-31 23:59:59")).demoList(4)
+                .productId(35455).priority(1).demoPrice(BigDecimal.valueOf(38.95))
                 .curr("EUR").build();
-        dpsProDemoList.add(dpsProDemo1);
-        dpsProDemoList.add(dpsProDemo2);
-        dpsProDemoList.add(dpsProDemo3);
-        dpsProDemoList.add(dpsProDemo4);
-        dpsProDemo = dpsProDemo2;
+        demoList.add(demo1);
+        demoList.add(demo2);
+        demoList.add(demo3);
+        demoList.add(demo4);
+        demo = demo2;
 
-        dpsProDemoResponseDto = DpsProDemoResponseDto.builder()
-                .productId(dpsProDemo3.getProductId())
-                .brandId(dpsProDemo3.getBrandId())
-                .dpsProDemoList(dpsProDemo3.getDpsProDemoList())
-                .applicationDates(new ArrayList<LocalDate>())
-                .dpsProDemo(dpsProDemo3.getDpsProDemo()).build();
+        DemoResponseDto demoResponseDto = DemoResponseDto.builder()
+                .productId(demo3.getProductId())
+                .brandId(demo3.getBrandId())
+                .demoList(demo3.getDemoList())
+                .applicationDates(localDates)
+                .demoPrice(demo3.getDemoPrice()).build();
 
-        dpsProDemoRequestDto = DpsProDemoRequestDto.builder()
+        DemoRequestDto demoRequestDto = DemoRequestDto.builder()
                 .requestDate(Timestamp.valueOf("2020-06-14 11:55:00"))
                 .brandId(1L)
                 .productId(35455).build();
@@ -93,24 +92,24 @@ class ExpectedBehaviorIntegrationTest {
     }
 
     @ParameterizedTest
-    @MethodSource("dpsProDemoRequestDtoProviderFactory")
-    void testAllDpsProDemo(DpsProDemoRequestDto dpsProDemoRequestDtoAll) throws ExecutionException, InterruptedException {
+    @MethodSource("demoRequestDtoProviderFactory")
+    void testAllDemo(DemoRequestDto demoRequestDtoAll) throws RuntimeException{
 
-        when(dpsProDemoRepository.findByProductIdAndBrandId(dpsProDemoRequestDtoAll.getProductId(), dpsProDemoRequestDtoAll.getBrandId())).thenReturn(dpsProDemoList);
+        when(demoRepository.findByProductIdAndBrandId(demoRequestDtoAll.getProductId(), demoRequestDtoAll.getBrandId())).thenReturn(demoList);
 
         try {
-            mockMvc.perform(MockMvcRequestBuilders.get("/dpsProDemo/{hour},{productId},{brandId}", dpsProDemoRequestDtoAll.getRequestDate()
-                                    , dpsProDemoRequestDtoAll.getProductId(), dpsProDemoRequestDtoAll.getBrandId()
+            mockMvc.perform(MockMvcRequestBuilders.get("/demo/{hour},{productId},{brandId}", demoRequestDtoAll.getRequestDate()
+                                    , demoRequestDtoAll.getProductId(), demoRequestDtoAll.getBrandId()
                             )
                             .contentType("application/json")
             ).andDo(print()).andExpect(status().isOk());
-            DpsProDemoResponseDto responseDtoResult = dpsProDemoService.getCurrentDpsProDemoByProductIdAndBrandId(dpsProDemoRequestDtoAll).get();
+            DemoResponseDto responseDtoResult = demoService.getCurrentDemoByProductIdAndBrandId(demoRequestDtoAll).get();
             Assertions.assertAll(
                     () -> assertEquals(35455, responseDtoResult.getProductId()
                             , "ProductIOd " + responseDtoResult.getProductId()),
                     () -> assertEquals(1L, responseDtoResult.getBrandId()
                             , "branddD " + responseDtoResult.getBrandId()),
-                    () -> assertEquals(true, responseDtoResult.getApplicationDates().size() > 0
+                    () -> assertTrue(responseDtoResult.getApplicationDates().size() > 0
                             , "mandatory aplication days" + responseDtoResult.getApplicationDates().size()));
 
         } catch (Exception e) {
@@ -119,25 +118,25 @@ class ExpectedBehaviorIntegrationTest {
 
     }
 
-    static Iterator<DpsProDemoRequestDto> dpsProDemoRequestDtoProviderFactory() {
-        List<DpsProDemoRequestDto> requestDtos = new ArrayList<>();
-        requestDtos.add(DpsProDemoRequestDto.builder()
+    static Iterator<DemoRequestDto> demoRequestDtoProviderFactory() {
+        List<DemoRequestDto> requestDtos = new ArrayList<>();
+        requestDtos.add(DemoRequestDto.builder()
                 .requestDate(Timestamp.valueOf("2020-06-14 10:00:00"))
                 .productId(35455)
                 .brandId(1L).build());
-        requestDtos.add(DpsProDemoRequestDto.builder()
+        requestDtos.add(DemoRequestDto.builder()
                 .requestDate(Timestamp.valueOf("2020-06-14 16:00:00"))
                 .productId(35455)
                 .brandId(1L).build());
-        requestDtos.add(DpsProDemoRequestDto.builder()
+        requestDtos.add(DemoRequestDto.builder()
                 .requestDate(Timestamp.valueOf("2020-06-14 21:00:00"))
                 .productId(35455)
                 .brandId(1L).build());
-        requestDtos.add(DpsProDemoRequestDto.builder()
+        requestDtos.add(DemoRequestDto.builder()
                 .requestDate(Timestamp.valueOf("2020-06-15 10:00:00"))
                 .productId(35455)
                 .brandId(1L).build());
-        requestDtos.add(DpsProDemoRequestDto.builder()
+        requestDtos.add(DemoRequestDto.builder()
                 .requestDate(Timestamp.valueOf("2020-06-16 21:00:00"))
                 .productId(35455)
                 .brandId(1L).build());

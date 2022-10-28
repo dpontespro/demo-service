@@ -1,14 +1,14 @@
-package com.dpontespro.devops.exceptions;
+package com.dpspro.devops.exceptions;
 
 import org.springframework.http.HttpStatus;
 
-public class DpsProDemoNotFoundException extends RuntimeException {
-    private static final String DESCRIPTION = "DpsProDemo Not Found Exception";
-    public DpsProDemoNotFoundException(HttpStatus notFound, String detail) {
+public class DemoNotFoundException extends RuntimeException {
+    private static final String DESCRIPTION = "Demo Not Found Exception";
+    public DemoNotFoundException(HttpStatus notFound, String detail) {
 
         super(DESCRIPTION + ". " + detail);
     }
 
-    public DpsProDemoNotFoundException() {
+    public DemoNotFoundException() {
     }
 }

@@ -1,10 +1,10 @@
-package com.dpontespro.devops.services;
+package com.dpspro.devops.services;
 
-import com.dpontespro.devops.dtos.DpsProDemoRequestDto;
-import com.dpontespro.devops.dtos.DpsProDemoResponseDto;
-import com.dpontespro.devops.entities.DpsProDemo;
-import com.dpontespro.devops.exceptions.DpsProDemoNotFoundException;
-import com.dpontespro.devops.repositories.DpsProDemoRepository;
+import com.dpspro.devops.dtos.DemoRequestDto;
+import com.dpspro.devops.dtos.DemoResponseDto;
+import com.dpspro.devops.entities.Demo;
+import com.dpspro.devops.exceptions.DemoNotFoundException;
+import com.dpspro.devops.repositories.DemoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,29 +26,29 @@ import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @Service
-public class DpsProDemoAsyncService {
-    private final static Logger LOGGER = LoggerFactory.getLogger(DpsProDemoAsyncService.class);
+public class DemoAsyncService {
+    private final static Logger LOGGER = LoggerFactory.getLogger(DemoAsyncService.class);
     @Autowired
-    DpsProDemoRepository dpsProDemoRepository;
+    DemoRepository demoRepository;
 
-    public DpsProDemoAsyncService(DpsProDemoRepository dpsProDemoRepository) {
-        this.dpsProDemoRepository = dpsProDemoRepository;
+    public DemoAsyncService(DemoRepository demoRepository) {
+        this.demoRepository = demoRepository;
     }
 
     @Async("asyncTaskExecutor")
-    public Future<DpsProDemoResponseDto> getCurrentDpsProDemoByProductIdAndBrandId(DpsProDemoRequestDto dpsProDemoFilterParams) throws DpsProDemoNotFoundException {
+    public Future<DemoResponseDto> getCurrentDemoByProductIdAndBrandId(DemoRequestDto demoFilterParams) throws DemoNotFoundException {
         try {
-            LOGGER.info(" asyncDpsProDemoResponmse Start processing " + LocalDateTime.now());
+            LOGGER.info(" asyncDemoResponmse Start processing " + LocalDateTime.now());
             TimeUnit.MILLISECONDS.sleep(1000);
             return new AsyncResult<>(
                     entityToDto(
-                            getDpsProDemo(dpsProDemoFilterParams
-                                    , dpsProDemoRepository
-                                            .findByProductIdAndBrandId(dpsProDemoFilterParams.getProductId(), dpsProDemoFilterParams.getBrandId())
+                            getDemo(demoFilterParams
+                                    , demoRepository
+                                            .findByProductIdAndBrandId(demoFilterParams.getProductId(), demoFilterParams.getBrandId())
                                             .stream()
-                                            .filter(dpsProDemo -> dpsProDemo.validDpsProDemoRange(dpsProDemoFilterParams.getRequestDate()))
+                                            .filter(demo -> demo.validDemoRange(demoFilterParams.getRequestDate()))
                                             .collect(Collectors.toList()))
-                            , dpsProDemoFilterParams.getRequestDate()));
+                            , demoFilterParams.getRequestDate()));
 
 
         } catch (InterruptedException e) {
@@ -58,26 +58,26 @@ public class DpsProDemoAsyncService {
 
     }
 
-    protected DpsProDemo getDpsProDemo(DpsProDemoRequestDto dpsProDemoFilterParams, List<DpsProDemo> dpsProDemo) {
+    protected Demo getDemo(DemoRequestDto demoFilterParams, List<Demo> demo) {
         boolean seen = false;
-        DpsProDemo best = null;
-        Comparator<DpsProDemo> comparator = Comparator.comparing(DpsProDemo::getPriority);
-        for (DpsProDemo dpsProDemo1 : dpsProDemo) {
-            if (!seen || comparator.compare(dpsProDemo1, best) > 0) {
+        Demo best = null;
+        Comparator<Demo> comparator = Comparator.comparing(Demo::getPriority);
+        for (Demo demo1 : demo) {
+            if (!seen || comparator.compare(demo1, best) > 0) {
                 seen = true;
-                best = dpsProDemo1;
+                best = demo1;
             }
         }
-        return (seen ? Optional.of(best) : Optional.<DpsProDemo>empty())
-                .orElseThrow(() -> new DpsProDemoNotFoundException(HttpStatus.NOT_FOUND,
-                        "for productId :" + dpsProDemoFilterParams.getProductId() + " and date " + dpsProDemoFilterParams.getRequestDate()));
+        return (seen ? Optional.of(best) : Optional.<Demo>empty())
+                .orElseThrow(() -> new DemoNotFoundException(HttpStatus.NOT_FOUND,
+                        "for productId :" + demoFilterParams.getProductId() + " and date " + demoFilterParams.getRequestDate()));
     }
 
 
-    protected DpsProDemoResponseDto entityToDto(DpsProDemo dpsProDemo, Date filterDate) {
+    protected DemoResponseDto entityToDto(Demo demo, Date filterDate) {
 
-        return new DpsProDemoResponseDto(dpsProDemo.getProductId(), dpsProDemo.getBrandId(), dpsProDemo.getDpsProDemoList()
-                , dpsProDemo.lookForApplicationDates(filterDate), dpsProDemo.getDpsProDemo());
+        return new DemoResponseDto(demo.getProductId(), demo.getBrandId(), demo.getDemoList()
+                , demo.lookForApplicationDates(filterDate), demo.getDemoPrice());
 
     }
 

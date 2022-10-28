@@ -1,4 +1,4 @@
-package com.dpontespro.devops.configuration;
+package com.dpspro.devops.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

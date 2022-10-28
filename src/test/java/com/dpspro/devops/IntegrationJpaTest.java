@@ -1,6 +1,6 @@
-package com.dpontespro.devops;
+package com.dpspro.devops;
 
-import com.dpontespro.devops.repositories.DpsProDemoRepository;
+import com.dpspro.devops.repositories.DemoRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,7 +20,7 @@ class IntegrationJpaTest {
     @Autowired
     private EntityManager entityManager;
     @Autowired
-    private DpsProDemoRepository dpsProDemoRepository;
+    private DemoRepository demoRepository;
 
 
     @Test
@@ -28,7 +28,7 @@ class IntegrationJpaTest {
         assertThat(dataSource).isNotNull();
         assertThat(jdbcTemplate).isNotNull();
         assertThat(entityManager).isNotNull();
-        assertThat(dpsProDemoRepository).isNotNull();
+        assertThat(demoRepository).isNotNull();
     }
 
 }

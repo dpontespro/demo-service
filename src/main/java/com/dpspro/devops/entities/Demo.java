@@ -1,4 +1,4 @@
-package com.dpontespro.devops.entities;
+package com.dpspro.devops.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Builder
 
 @Entity(name="demo")
-public class  DpsProDemo {
+public class  Demo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -29,29 +29,29 @@ public class  DpsProDemo {
     private Date endDate;
 
     @Column(name = "demo_list")
-    private Integer dpsProDemoList;
+    private Integer demoList;
     private Integer productId;
     private Integer priority;
     @Column(name = "demo_price")
-    private BigDecimal dpsProDemo;
+    private BigDecimal demoPrice;
     private String curr;
 
     @JsonIgnore
     @Transient
-    private List<LocalDate> dpsProDemoMandatoryDays;
+    private List<LocalDate> demoMandatoryDays;
 
-    public DpsProDemo(Long brandId, Date startDate, Date endDate, Integer dpsProDemoList, Integer productId, Integer priority, BigDecimal dpsProDemo, String curr) {
+    public Demo(Long brandId, Date startDate, Date endDate, Integer demoList, Integer productId, Integer priority, BigDecimal demoPrice, String curr) {
         this.brandId = brandId;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.dpsProDemoList = dpsProDemoList;
+        this.demoList = demoList;
         this.productId = productId;
         this.priority = priority;
-        this.dpsProDemo = dpsProDemo;
+        this.demoPrice = demoPrice;
         this.curr = curr;
     }
 
-    public boolean validDpsProDemoRange(Date applicationTime) {
+    public boolean validDemoRange(Date applicationTime) {
         return applicationDates(applicationTime);
     }
 
@@ -61,12 +61,11 @@ public class  DpsProDemo {
 
     public List<LocalDate> lookForApplicationDates(Date filterDate) {
 
-        for (LocalDate localDate : this.dpsProDemoMandatoryDays = Collections.unmodifiableList(listDpsProDemoMandatiryDays(filterDate))) {
-        }
-        return this.dpsProDemoMandatoryDays;
+        this.demoMandatoryDays = Collections.unmodifiableList(listDemoMandatoryDays(filterDate));
+        return this.demoMandatoryDays;
     }
 
-    private List<LocalDate> listDpsProDemoMandatiryDays(Date filterDate) {
+    private List<LocalDate> listDemoMandatoryDays(Date filterDate) {
 
         final List<LocalDate> localDateList = LocalDate.ofInstant(filterDate.toInstant(), ZoneId.of("UTC"))
                 .datesUntil(LocalDate.ofInstant(this.endDate.toInstant(), ZoneId.of("UTC")))

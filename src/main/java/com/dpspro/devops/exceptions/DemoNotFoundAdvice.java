@@ -1,4 +1,4 @@
-package com.dpontespro.devops.exceptions;
+package com.dpspro.devops.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class DpsProDemoNotFoundAdvice {
+public class DemoNotFoundAdvice {
     @ResponseBody
-    @ExceptionHandler(DpsProDemoNotFoundException.class)
+    @ExceptionHandler(DemoNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String dpsProDemoNotFoundHandler(DpsProDemoNotFoundException ex) {
+    String demoNotFoundHandler(DemoNotFoundException ex) {
         return ex.getMessage();
     }
 }

@@ -1,9 +1,9 @@
-package com.dpontespro.devops.controllers;
+package com.dpspro.devops.controllers;
 
-import com.dpontespro.devops.dtos.DpsProDemoRequestDto;
-import com.dpontespro.devops.dtos.DpsProDemoResponseDto;
-import com.dpontespro.devops.entities.DpsProDemo;
-import com.dpontespro.devops.services.DpsProDemoAsyncService;
+import com.dpspro.devops.dtos.DemoRequestDto;
+import com.dpspro.devops.dtos.DemoResponseDto;
+import com.dpspro.devops.entities.Demo;
+import com.dpspro.devops.services.DemoAsyncService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,8 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -38,65 +36,65 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 //@RunWith(SpringRunner.class)
 
-@WebMvcTest(DpsProDemoController.class)
+@WebMvcTest(DemoController.class)
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class DpsProDemoControllerTest {
-    private final static Logger LOGGER = LoggerFactory.getLogger(DpsProDemoControllerTest.class);
+class DemoControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    private DpsProDemo dpsProDemo;
-    private List<LocalDate> dpsProDemoDateList;
-    private DpsProDemoRequestDto dpsProDemoRequestDto;
-    private DpsProDemoResponseDto dpsProDemoResponseDto;
+    private Demo demo;
+    private List<LocalDate> demoDateList;
+    private DemoRequestDto demoRequestDto;
+    private DemoResponseDto demoResponseDto;
 
     @MockBean
-    private DpsProDemoAsyncService dpsProDemoAsyncService;
+    private DemoAsyncService demoAsyncService;
 
     @MockBean
-    private DpsProDemoController dpsProDemoController;
+    private DemoController demoController;
 
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        dpsProDemoAsyncService = mock(DpsProDemoAsyncService.class);
-        this.dpsProDemoController = new DpsProDemoController(dpsProDemoAsyncService);
-        this.dpsProDemoRequestDto = DpsProDemoRequestDto.builder().requestDate(Timestamp.valueOf("2020-06-14 00:00:00"))
+        demoAsyncService = mock(DemoAsyncService.class);
+        this.demoController = new DemoController(demoAsyncService);
+        this.demoRequestDto = DemoRequestDto.builder().requestDate(Timestamp.valueOf("2020-06-14 00:00:00"))
                 .productId(35455).brandId(1L).build();
-        this.dpsProDemoDateList = new ArrayList<>();
-        this.dpsProDemoDateList.add(LocalDate.ofInstant(this.dpsProDemoRequestDto.getRequestDate().toInstant(), ZoneId.of("UTC")));
+        this.demoDateList = new ArrayList<>();
+        this.demoDateList.add(LocalDate.ofInstant(this.demoRequestDto.getRequestDate().toInstant(), ZoneId.of("UTC")));
 
 
     }
 
     @Test
-    void getDpsProDemoAsync() throws Exception {
-        this.dpsProDemo = DpsProDemo.builder().brandId(1L)
+    void getDemoAsync() throws Exception {
+        this.demo = Demo.builder().brandId(1L)
                 .startDate(Timestamp.valueOf("2020-06-14 00:00:00"))
-                .endDate(Timestamp.valueOf("2020-12-31 23:59:59")).dpsProDemoList(1)
-                .productId(35455).priority(0).dpsProDemo(BigDecimal.valueOf(35.50))
+                .endDate(Timestamp.valueOf("2020-12-31 23:59:59")).demoList(1)
+                .productId(35455).priority(0).demoPrice(BigDecimal.valueOf(35.50))
                 .curr("EUR").build();
-        this.dpsProDemoResponseDto = DpsProDemoResponseDto.builder()
-                .productId(dpsProDemo.getProductId())
-                .brandId(dpsProDemo.getBrandId())
-                .dpsProDemoList(dpsProDemo.getDpsProDemoList())
-                .applicationDates(dpsProDemoDateList)
-                .dpsProDemo(dpsProDemo.getDpsProDemo()).build();
+        this.demoResponseDto = DemoResponseDto.builder()
+                .productId(demo.getProductId())
+                .brandId(demo.getBrandId())
+                .demoList(demo.getDemoList())
+                .applicationDates(demoDateList)
+                .demoPrice(demo.getDemoPrice()).build();
         String hour = "2020-06-14 00:00:00";
         Integer pId = 35455;
         String bId = "1";
-        when(dpsProDemoAsyncService.getCurrentDpsProDemoByProductIdAndBrandId(dpsProDemoRequestDto))
-                .thenReturn(new AsyncResult<>(this.dpsProDemoResponseDto));
-        mockMvc.perform(get("/dpsProDemo/{hour},{productId},{brandId}", hour, pId, bId).contentType("application/json")
+        when(demoAsyncService.getCurrentDemoByProductIdAndBrandId(demoRequestDto))
+                .thenReturn(new AsyncResult<>(this.demoResponseDto));
+        mockMvc.perform(get("/demo/{hour},{productId},{brandId}", hour, pId, bId).contentType("application/json")
                 ).andDo(print()).
                 andExpect(status().isOk());
-        Future<DpsProDemoResponseDto> responseDtoResult = dpsProDemoAsyncService.getCurrentDpsProDemoByProductIdAndBrandId(dpsProDemoRequestDto);
+        Future<DemoResponseDto> responseDtoResult = demoAsyncService.getCurrentDemoByProductIdAndBrandId(demoRequestDto);
 
-        Assertions.assertEquals(responseDtoResult.get().getDpsProDemo(), BigDecimal.valueOf(35.50));
+        Assertions.assertEquals(responseDtoResult.get().getDemoPrice(), BigDecimal.valueOf(35.50));
         Assertions.assertEquals(responseDtoResult.get().getProductId(), 35455);
         Assertions.assertEquals(responseDtoResult.get().getBrandId(), 1L);
         Assertions.assertEquals(responseDtoResult.get().getApplicationDates().size(), 1);
@@ -104,17 +102,17 @@ class DpsProDemoControllerTest {
     }
 
     @Test
-    void getDpsProDemoAsyncBadRequest() throws Exception {
+    void getDemoAsyncBadRequest() throws Exception {
         String hour = "2020-06_14 00:00:00";
         Integer pId = 15;
         String bId = "1";
-        this.dpsProDemo = null;
-        when(dpsProDemoAsyncService.getCurrentDpsProDemoByProductIdAndBrandId(null))
+        this.demo = null;
+        when(demoAsyncService.getCurrentDemoByProductIdAndBrandId(null))
                 .thenReturn(new AsyncResult<>(null));
-        mockMvc.perform(get("/dpsProDemo/{hour},{productId},{brandId}", hour, pId, bId)
+        mockMvc.perform(get("/demo/{hour},{productId},{brandId}", hour, pId, bId)
                 .contentType("application/json")
-            ).andDo(print()).andExpect(status().isBadRequest());
-        Future<DpsProDemoResponseDto> responseDtoResult = dpsProDemoAsyncService.getCurrentDpsProDemoByProductIdAndBrandId(dpsProDemoRequestDto);
+        ).andDo(print()).andExpect(status().isBadRequest());
+        Future<DemoResponseDto> responseDtoResult = demoAsyncService.getCurrentDemoByProductIdAndBrandId(demoRequestDto);
         Assertions.assertNull(responseDtoResult);
 
 

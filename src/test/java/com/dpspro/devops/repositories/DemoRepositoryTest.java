@@ -1,6 +1,6 @@
-package com.dpontespro.devops.repositories;
+package com.dpspro.devops.repositories;
 
-import com.dpontespro.devops.entities.DpsProDemo;
+import com.dpspro.devops.entities.Demo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,55 +15,55 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
-class DpsProDemoRepositoryTest {
+class DemoRepositoryTest {
 
     @Autowired
-    private DpsProDemoRepository dpsProDemoRepository;
-    private DpsProDemo dpsProDemo;
+    private DemoRepository demoRepository;
+    private Demo demo;
 
     @BeforeEach
     void setUp() {
 
-        dpsProDemo = DpsProDemo.builder().brandId(1L)
+        demo = Demo.builder().brandId(1L)
                 .startDate(Timestamp.valueOf("2021-06-14 00:00:00"))
-                .endDate(Timestamp.valueOf("2021-12-31 23:59:59")).dpsProDemoList(5)
-                .productId(99999).priority(1).dpsProDemo(BigDecimal.valueOf(60.60))
+                .endDate(Timestamp.valueOf("2021-12-31 23:59:59")).demoList(5)
+                .productId(99999).priority(1).demoPrice(BigDecimal.valueOf(60.60))
                 .curr("EUR").build();
     }
 
 
     @Test
-    @DisplayName("can_get_a_dpsProDemo_by_productId_and_brandId")
+    @DisplayName("can_get_a_demo_by_productId_and_brandId")
     void findByProductIdAndBrandIdTest() {
         //given
 
-        dpsProDemo = DpsProDemo.builder().brandId(1L)
+        demo = Demo.builder().brandId(1L)
                 .startDate(Timestamp.valueOf("2021-06-14 00:00:00"))
-                .endDate(Timestamp.valueOf("2021-12-31 23:59:59")).dpsProDemoList(5)
-                .productId(99999).priority(1).dpsProDemo(BigDecimal.valueOf(160.60))
+                .endDate(Timestamp.valueOf("2021-12-31 23:59:59")).demoList(5)
+                .productId(99999).priority(1).demoPrice(BigDecimal.valueOf(160.60))
                 .curr("EUR").build();
 
-        DpsProDemo dpsProDemoFromPersistence = dpsProDemoRepository.save(dpsProDemo);
+        Demo demoFromPersistence = demoRepository.save(demo);
 
-        assertThat(dpsProDemoRepository.findByProductIdAndBrandId(99999, 1L)).isNotNull();
-        assertThat(dpsProDemoRepository.findByProductIdAndBrandId(99999, 1L).get(0)
-                .getDpsProDemo()).isEqualTo(dpsProDemoFromPersistence.getDpsProDemo());
+        assertThat(demoRepository.findByProductIdAndBrandId(99999, 1L)).isNotNull();
+        assertThat(demoRepository.findByProductIdAndBrandId(99999, 1L).get(0)
+                .getDemoPrice()).isEqualTo(demoFromPersistence.getDemoPrice());
 
     }
 
 
     @Test
     void findByProductIdAndBrandId() {
-        dpsProDemo = new DpsProDemo(1L,
+        demo = new Demo(1L,
                 Timestamp.valueOf("2021-06-14 00:00:00"),
                 Timestamp.valueOf("2021-12-31 23:59:59"), 50
                 , 35456, 1, BigDecimal.valueOf(60.60)
                 , "EUR");
 
-        dpsProDemoRepository.save(dpsProDemo);
+        demoRepository.save(demo);
         //then
-        List<DpsProDemo> byProductIdAndBrandId;
-        byProductIdAndBrandId = dpsProDemoRepository
+        List<Demo> byProductIdAndBrandId;
+        byProductIdAndBrandId = demoRepository
                 .findByProductIdAndBrandId(35456, 1L);
 
         Assertions.assertEquals(byProductIdAndBrandId.size(), 1);

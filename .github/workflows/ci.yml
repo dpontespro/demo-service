@@ -1,10 +1,10 @@
-name: CI
+name: build
 on:
   push:
     branches: ['develop', 'release-*']
 jobs:
-  ci:
-    name: Test - Unit & Integration
+  build:
+    name: Build and Run Tests
     runs-on: ubuntu-latest # macos-latest macos-11 windows-2019 ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -12,5 +12,5 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Unit & Integration Tests
+      - name: Build and Run Tests
         run: mvn -B verify # -B: --batch-mode
