@@ -1,0 +1,8 @@
+language: java
+branches:
+  only:
+    - develop
+    - /^[release-[0-999].[0-999]$/
+    - master
+script:
+- ./mvn clean install -B
