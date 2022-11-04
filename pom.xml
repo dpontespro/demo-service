@@ -19,9 +19,10 @@
         <java.version>11</java.version>
         <lombok.version>1.18.24</lombok.version>
         <swagger.version>2.7.0</swagger.version>
+        <sonar.organization>dpspro-demo</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
     <dependencies>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
